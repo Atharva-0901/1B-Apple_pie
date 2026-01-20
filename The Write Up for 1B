@@ -5,6 +5,12 @@ Using strings, I found interesting messages like 'You found the hidden treasure'
 I ran the binary with ltrace to trace library calls, and immediately saw the password in plaintext. The program used strncmp to compare my input against "not_the_password", revealing the password without any reverse engineering needed.
 With the correct password, the program still crashed on the second input - indicating a buffer overflow vulnerability
 Using radare2, I discovered a function called 'def_nothing_important' that was never called in normal execution
-Disassembling this function revealed it XOR-decoded several strings with the key 5, then printed them
+Disassembling this function revealed it XOR-decoded several strings with the key 5 stored in ecx register, then printed them
 The encoded data is:bab~U4@Z6}ui54qaZijix`
 I extracted the encoded strings and wrote a simple Python script to XOR-decode them, revealing the flag: gdg{P1E_3xpl01ted_lol}
+
+for decoding ->
+python3 -c "
+encoded = 'bab~U4@Z6}ui54q\`aZijix'
+print(''.join(chr(ord(c) ^ 5) for c in encoded))
+"
